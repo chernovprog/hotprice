@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <link rel="shortcut icon" th:href="@{/img/favicon.ico}">
+    <title>HotPrice - сравнивай цены на товары ...</title>
+    <link rel="stylesheet" th:href="@{/css/main.css}">
+    <link rel="stylesheet" th:href="@{/css/media.css}">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css" integrity="sha384-UHRtZLI+pbxtHCWp1t77Bi1L4ZtiqrqD80Kn4Z8NTSRyMA2Fd33n5dQ8lWUE00s/" crossorigin="anonymous">
+</head>
+<body class="clearfix">
+<header class="header" id="header">
+    <div class="header-first-line">
+        <div class="header-logo">
+            <a href="/">
+                <img th:src="@{/img/logo.png}" alt="HotPrice">
+            </a>
+        </div>
+        <div class="search-line">
+            <form action="/search/" method="GET">
+                <input type="text" id="searchbox" name="query" value=" ... хочу купить" maxlength="50">
+                <button type="submit"><i class="fas fa-search fa-lg"></i></button>
+            </form>
+        </div>
+    </div>
+    <div class="header-second-line">
+        <span class="dropdown-menu-box">
+            <span class="dropdown-menu-text">Каталог товаров&nbsp;&nbsp;</span>
+        </span>
+    </div>
+</header>
+<div class="content">
+    <div class="container-first">
+        <nav class="clearfix">
+            <ul class="menu-icons">
+                <li th:each="market : ${menu}"><i th:class="${market.icon}"></i></li>
+            </ul>
+            <ul class="menu">
+                <li class="menu-list menu-list-1" th:each="market : ${menu}">
+
+                    <div class="menu-list-box">
+                        <span class="menu-list__inner-line">
+                            <span class="menu-name" th:text="${market.name}"></span>
+                            <span class="sign-more"><i class="fas fa-angle-right fa-lg"></i></span>
+                        </span>
+                    </div>
+
+                    <ul class="drop-menu drop-menu-1">
+                        <li class="menu-list menu-list-2" th:each="rubric : ${market.rubrics}">
+                            <div class="menu-list-box">
+                                <span class="menu-list__inner-line">
+                                    <span class="menu-name" th:text="${rubric.name}"></span>
+                                    <span class="sign-more"><i class="fas fa-angle-right fa-lg"></i></span>
+                                </span>
+                            </div>
+                            <ul class="drop-menu drop-menu-2">
+                                <li class="menu-list" th:each="group : ${rubric.groups}">
+                                    <a th:href="${group.url}">
+                                        <span class="menu-name" th:text="${group.name}"></span>
+                                    </a>
+                                </li>
+                            </ul>
+
+                        </li>
+                    </ul>
+
+                </li>
+            </ul>
+        </nav>
+        <div>
+            <div id="banner-1"></div>
+        </div>
+    </div>
+    <div class="container-second">
+        <p class="container-second__chapter">Популярные группы</p>
+        <ul class="container-second__list clearfix">
+            <li class="container-second__item" th:each="item : ${popularGroupsList}">
+                <div class="container-second__item-box">
+                    <a th:href="${item.url}">
+                        <div class="container-second__img-box">
+                            <img class="container-second__img" th:src="${item.img}" alt="">
+                        </div>
+                        <span class="container-second__name" th:text="${item.name}"></span>
+                    </a>
+                </div>
+            </li>
+        </ul>
+    </div>
+</div>
+<footer class="footer" id="footer">
+    <div class="container">
+        <div class="credits">
+            <a href="/">
+                <img class="footer-logo" th:src="@{/img/logo.png}" alt="HotPrice">
+            </a>
+            <div class="credits__rights">
+                © HotPrice 2018
+            </div>
+            <div>
+                О проекте
+            </div>
+        </div>
+    </div>
+</footer>
+<div id="top"><i class="fas fa-angle-double-up fa-2x"></i></div>
+<script th:src="@{/webjars/jquery/3.3.1-1/jquery.min.js}"></script>
+<script th:src="@{/js/main.js}"></script>
+<script th:src="@{/js/banner.js}"></script>
+</body>
+</html>
