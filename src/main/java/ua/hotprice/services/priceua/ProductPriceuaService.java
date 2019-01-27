@@ -31,16 +31,11 @@ public class ProductPriceuaService {
         if (doc != null) {
             Element firstProduct = this.getFirstProductFromSearchResult(doc);
             if (firstProduct != null) {
-                String linkFirstProduct = this.getLinkFirstProduct(firstProduct);
+                String linkOffers = this.getDirectLinkProductOffers(firstProduct);
 
-                String linkOffers = "";
-                if (linkFirstProduct != null && !"".equals(linkFirstProduct)) {
-                    linkOffers = this.getDirectLinkProductOffers(linkFirstProduct);
+                if (!"".equals(linkOffers)) {
+                    List<Offer> listOffers = this.getListOffers(linkOffers);
 
-                    List<Offer> listOffers = new ArrayList<>();
-                    if (!"".equals(linkOffers)) {
-                        listOffers = this.getListOffers(linkOffers);
-                    }
                     if (!listOffers.isEmpty()) {
                         product = context.getBean(Product.class);
                         product.setName(this.getNameFirstProduct(firstProduct));
@@ -60,30 +55,24 @@ public class ProductPriceuaService {
             doc = Jsoup.connect(source).get();
         } catch (IOException e) {
             e.printStackTrace();
-            logger.error("HTTP error fetching URL. Status=404. Search by keyword in Price.ua. Path=" + source);
+            logger.error("HTTP error fetching URL. Status=404. Search by keyword on Price.ua. Path=" + source);
         }
         return doc;
     }
 
     private Element getFirstProductFromSearchResult(Document doc) {
-        return doc.selectFirst("div.product-block");
-    }
-
-    private String getLinkFirstProduct(Element firstProductBlock) {
-        return firstProductBlock.select("a.model-name.ga_card_mdl_title").attr("href");
+        return doc.selectFirst(".product-block");
     }
 
     // Get a direct link to the product offers
-    private String getDirectLinkProductOffers(String link) {
+    private String getDirectLinkProductOffers(Element firstProduct) {
+        String link = firstProduct.select(".model-name.ga_card_mdl_title").attr("href");
+        String id = firstProduct.attr("data-tracker-mid");
+
         if (link != null && !"".equals(link) && link.contains("/")) {
             String[] split = link.split("/");
-            String lastPart = split[split.length - 1];
-            if (lastPart.contains("t1m")) {
-                String id = lastPart.substring(lastPart.indexOf("t1m") + 3, lastPart.length());
-                return "https://price.ua/" + split[4] + "/prices/" + id;
-            }
-        }
-        return "";
+            return "https://price.ua/" + split[4] + "/prices/" + id + ".html";
+        } else return "";
     }
 
     private String getNameFirstProduct(Element firstProduct) {
@@ -123,6 +112,7 @@ public class ProductPriceuaService {
             doc = Jsoup.connect(linkWithOffers).get();
         } catch (IOException e) {
             e.printStackTrace();
+            logger.error("HTTP error fetching URL. Status=404. Incorrect link generation (Price.ua). Link=" + linkWithOffers);
         }
         return doc;
     }
@@ -196,5 +186,6 @@ public class ProductPriceuaService {
     private String getCurrencyStore(Element el) {
         return el.select("span.price span").text();
     }
+
 }
 
